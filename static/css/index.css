@@ -134,4 +134,43 @@ body {
 }
 
 
+.full-page-image {
+  background-image: url(media/big_banner.png);
+  background-size: cover;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
 
+
+.full-page-image video {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.jay {
+  /* Center your content vertically and horizontally */
+  position: absolute;
+  bottom: 0;
+  /* right: 25; */
+  /* transform: translate(-50%, -50%); */
+  z-index: 20;
+  color: #fff;
+  /* Set the color for your content */
+  background-color: rgba(0, 0, 0, 0.4);
+  font-size: 150%;
+}
+
+.overlay-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5); /* Optional dark overlay */
+  padding: 20px;
+  border-radius: 10px;
+}

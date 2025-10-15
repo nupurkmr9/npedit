@@ -1,31 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRD9XYJL5Q"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-RRD9XYJL5Q');
+  </script>
+
   <meta charset="utf-8">
   <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
   <!-- Replace the content tag with appropriate information -->
-  <meta name="description" content="DESCRIPTION META TAG">
-  <meta property="og:title" content="SOCIAL MEDIA TITLE TAG"/>
-  <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
-  <meta property="og:url" content="URL OF THE WEBSITE"/>
+  <meta name="description" content="NP-Edit: Learning an Image Editing Model without Image Editing Pairs">
+  <meta property="og:title" content="NP-Edit: Learning an Image Editing Model without Image Editing Pairs"/>
+  <meta property="og:description" content=""/>
+  <meta property="og:url" content="https://nupurkmr9.github.io/npedit/"/>
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-  <meta property="og:image" content="static/image/your_banner_image.png" />
+  <meta property="og:image" content="https://nupurkmr9.github.io/npedit/static/images/banner.jpg" />
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
 
 
-  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
-  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
+  <meta name="twitter:title" content="NP-Edit: Learning an Image Editing Model without Image Editing Pairs">
+  <meta name="twitter:description" content="NP-Edit: Learning an Image Editing Model without Image Editing Pairs">
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
-  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
+  <meta name="twitter:image" content="https://nupurkmr9.github.io/npedit/static/images/banner.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <!-- Keywords for your paper to be indexed by-->
-  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
+  <meta name="keywords" content="Image Editing, Image Editing Pairs, Image Editing Models">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <title>Academic Project Page</title>
-  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <title>Learning an Image Editing Model without Image Editing Pairs</title>
+  <!-- <link rel="icon" type="image/x-icon" href="static/images/favicon.ico"> -->
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
   rel="stylesheet">
 
@@ -43,8 +54,55 @@
   <script src="static/js/bulma-carousel.min.js"></script>
   <script src="static/js/bulma-slider.min.js"></script>
   <script src="static/js/index.js"></script>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const videoElement = document.getElementById('bg-video');
+
+        // When the video metadata is loaded
+        videoElement.addEventListener('loadedmetadata', function () {
+            videoElement.style.opacity = 1.0;
+        });
+    });
+
+    window.addEventListener("scroll", function () {
+        let imageDiv = document.querySelector('.full-page-image');
+        const videoElement = document.getElementById('bg-video');
+        if (window.scrollY > 75) {
+            videoElement.style.opacity = 0;
+        }
+        // Check if page is scrolled
+        if (window.scrollY > 50) { // You can adjust this value based on your requirement
+            imageDiv.classList.add('banner-state');
+            imageDiv.classList.add('ncont');
+            imageDiv.style.backgroundImage = `url(static/images/banner.jpg)`;
+        };
+    });
+
+    function copyToClipboard(element) {
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($(element).text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+    }
+
+  </script>
 </head>
 <body>
+
+  <!-- <div class="full-page-image">
+    <video id="bg-video" autoplay loop muted playsinline style="width: 100%; height: auto; display: block;">
+        <source src="static/images/dataset_overview1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    
+    <div class="jay" style="padding: 0 20px">
+      <h1 style="font-family: Poppins; font-size: 250%;">Learning an Image Editing Model without Image Editing Pairs</h1>
+      <p style="font-family: Poppins; font-size: 100%;">Learning an Image Editing Model without Image Editing Pairs</p>
+    </div>
+  </div> -->
 
 
   <section class="hero">
@@ -52,28 +110,51 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Academic Project Page</h1>
+            <h1 class="title is-1 publication-title">Learning an Image Editing Model without Image Editing Pairs</h1>
             <div class="is-size-5 publication-authors">
               <!-- Paper authors -->
               <span class="author-block">
-                <a href="FIRST AUTHOR PERSONAL LINK" target="_blank">First Author</a><sup>*</sup>,</span>
+                <a href="https://nupurkmr9.github.io/" target="_blank">Nupur Kumari</a><sup>1</sup>,</span>
                 <span class="author-block">
-                  <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Second Author</a><sup>*</sup>,</span>
+                  <a href="https://peterwang512.github.io" target="_blank">Sheng-Yu Wang</a><sup>1</sup>,</span>
                   <span class="author-block">
-                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Third Author</a>
+                    <a href="https://www.nxzhao.com" target="_blank">Nanxuan Zhao</a><sup>2</sup>,
                   </span>
+                  <span class="author-block">
+                    <a href="https://yotamnitzan.github.io" target="_blank">Yotam Nitzan</a><sup>2</sup>,
+                  </span>
+                  <span class="author-block">
+                    <a href="https://yuheng-li.github.io" target="_blank">Yuheng Li</a><sup>2</sup>,
+                  </span>
+                  <span class="author-block">
+                    <a href="https://krsingh.cs.ucdavis.edu" target="_blank">Krishna Kumar Singh</a><sup>2</sup>,
+                  </span>
+                  <span class="author-block">
+                    <a href="http://richzhang.github.io" target="_blank">Richard Zhang</a><sup>2</sup>,
+                  </span>
+                  <span class="author-block">
+                    <a href="https://research.adobe.com/person/eli-shechtman/" target="_blank">Eli Shechtman</a><sup>2</sup>,
+                  </span>
+                  <span class="author-block">
+                    <a href="https://www.cs.cmu.edu/~junyanz/" target="_blank">Jun-Yan Zhu</a><sup>1</sup>,
+                  </span>
+                  <span class="author-block">
+                    <a href="https://www.xunhuang.me" target="_blank">Xun Huang</a><sup>2</sup>,
+                  </span>
+
+
                   </div>
 
                   <div class="is-size-5 publication-authors">
-                    <span class="author-block">Institution Name<br>Conferance name and year</span>
-                    <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span>
+                    <span class="author-block"><sup>1</sup>CMU, <sup>2</sup> Adobe<br>ArXiv 2025</span>
+                    <!-- <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span> -->
                   </div>
 
                   <div class="column has-text-centered">
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <span class="link-block">
-                        <a href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf" target="_blank"
+                        <a href="https://arxiv.org/pdf/2502.01720.pdf" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
@@ -82,31 +163,19 @@
                       </a>
                     </span>
 
-                    <!-- Supplementary PDF link -->
-                    <span class="link-block">
-                      <a href="static/pdfs/supplementary_material.pdf" target="_blank"
-                      class="external-link button is-normal is-rounded is-dark">
-                      <span class="icon">
-                        <i class="fas fa-file-pdf"></i>
-                      </span>
-                      <span>Supplementary</span>
-                    </a>
-                  </span>
-
                   <!-- Github link -->
                   <span class="link-block">
-                    <a href="https://github.com/YOUR REPO HERE" target="_blank"
+                    <a href="https://nupurkmr9.github.io/npedit/" target="_blank"
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
                       <i class="fab fa-github"></i>
                     </span>
-                    <span>Code</span>
+                    <span>Code (Coming Soon)</span>
                   </a>
                 </span>
-
                 <!-- ArXiv abstract Link -->
                 <span class="link-block">
-                  <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
+                  <a href="https://arxiv.org/abs/2502.01720" target="_blank"
                   class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                     <i class="ai ai-arxiv"></i>
@@ -127,13 +196,13 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <video poster="" id="tree" autoplay controls muted loop height="100%">
-        <!-- Your video here -->
+      <img src="static/images/method.jpg" alt="Banner Image" class="banner-image">
+      <!-- <video poster="" id="tree" autoplay controls muted loop height="100%">
         <source src="static/videos/banner_video.mp4"
         type="video/mp4">
-      </video>
-      <h2 class="subtitle has-text-centered">
-        Aliquam vitae elit ullamcorper tellus egestas pellentesque. Ut lacus tellus, maximus vel lectus at, placerat pretium mi. Maecenas dignissim tincidunt vestibulum. Sed consequat hendrerit nisl ut maximus. 
+      </video> -->
+      <h2 class="content has-text-justified">
+        We propose NP-Edit (No-Pair Edit), a framework for training image editing models using gradient feedback from a Vision–Language Model (VLM), requiring <strong>no paired supervision</strong>. For efficient training and effective VLM feedback, our formulation combines it with distribution matching loss to learn a <italic>few-step </italic> image editing model. Our findings show that performance improves directly with more powerful VLMs and larger datasets, demonstrating its strong potential and scalability.
       </h2>
     </div>
   </div>
@@ -148,7 +217,8 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ullamcorper tellus sed ante aliquam tempus. Etiam porttitor urna feugiat nibh elementum, et tempor dolor mattis. Donec accumsan enim augue, a vulputate nisi sodales sit amet. Proin bibendum ex eget mauris cursus euismod nec et nibh. Maecenas ac gravida ante, nec cursus dui. Vivamus purus nibh, placerat ac purus eget, sagittis vestibulum metus. Sed vestibulum bibendum lectus gravida commodo. Pellentesque auctor leo vitae sagittis suscipit.
+            Recent image editing models have achieved impressive results while following natural language editing instructions,  but they rely on supervised fine-tuning with large datasets of input-target pairs. This is a critical bottleneck, as such naturally occurring pairs are hard to curate at scale. 
+            Current workarounds use synthetic training pairs that leverage the zero-shot capabilities of existing models. However, this can propagate and magnify the artifacts of the pretrained model into the final trained model. In this work, we present a new training paradigm that eliminates the need for paired data entirely. Our approach directly optimizes a few-step diffusion model by unrolling it during training and leveraging feedback from vision-language models (VLMs).  For each input and editing instruction, the VLM evaluates if an edit follows the instruction and preserves unchanged content, providing direct gradients for end-to-end optimization. To ensure visual fidelity, we incorporate distribution matching loss (DMD), which constrains generated images to remain within the image manifold learned by pretrained models. We evaluate our method on standard benchmarks and include an extensive ablation study.  Without any paired data, our method performs on par with various image editing diffusion models trained on extensive supervised paired data, under the few-step setting.
           </p>
         </div>
       </div>
@@ -158,38 +228,38 @@
 <!-- End paper abstract -->
 
 
+
 <!-- Image carousel -->
 <section class="hero is-small">
   <div class="hero-body">
-    <div class="container">
+    <div class="container is-max-desktop">
+      <center><h2 class="title is-3">Results</h2></center>
       <div id="results-carousel" class="carousel results-carousel">
        <div class="item">
         <!-- Your image here -->
-        <img src="static/images/carousel1.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-          First image description.
-        </h2>
+         <!-- set a maximum height of 400px -->
+          <center><img src="static/images/sample1.jpg" alt="MY ALT TEXT" style="max-height: 400px;"/></center>
+          <center><p style="font-size: 16px;"><i>Adjust the background to a beach</i></p></center>  
       </div>
       <div class="item">
         <!-- Your image here -->
-        <img src="static/images/carousel2.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-          Second image description.
-        </h2>
+        <center><img src="static/images/sample2.jpg" alt="MY ALT TEXT" style="max-height: 400px;"/></center>
+        <center><p style="font-size: 16px;"><i>Replace the text WOOD with LAND</i></p></center>  
       </div>
       <div class="item">
         <!-- Your image here -->
-        <img src="static/images/carousel3.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-         Third image description.
-       </h2>
-     </div>
+        <center><img src="static/images/sample3.jpg" alt="MY ALT TEXT" style="max-height: 400px;"/></center>
+        <center><p style="font-size: 16px;"><i>Convert this image into an anime style</i></p></center>  
+      </div>
      <div class="item">
       <!-- Your image here -->
-      <img src="static/images/carousel4.jpg" alt="MY ALT TEXT"/>
-      <h2 class="subtitle has-text-centered">
-        Fourth image description.
-      </h2>
+      <center><img src="static/images/sample4.jpg" alt="MY ALT TEXT" style="max-height: 400px;"/></center>
+      <center><p style="font-size: 16px;"><i>Add a tennis ball next to the dog</i></p></center>  
+    </div>
+    <div class="item">
+      <!-- Your image here -->
+      <center><img src="static/images/sample5.jpg" alt="MY ALT TEXT" style="max-height: 400px;"/></center>
+      <center><p style="font-size: 16px;"><i>Make the child pout</i></p></center>  
     </div>
   </div>
 </div>
@@ -200,88 +270,136 @@
 
 
 
-<!-- Youtube video -->
+<!-- Results comparison -->
 <section class="hero is-small is-light">
   <div class="hero-body">
-    <div class="container">
-      <!-- Paper video. -->
-      <h2 class="title is-3">Video Presentation</h2>
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          
-          <div class="publication-video">
-            <!-- Youtube embed code here -->
-            <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          </div>
+    <div class="container is-max-desktop">
+      <center><h5 class="title is-3">Qualitative comparison (Local Image Editing) </h5></center>
+      <br>
+      <div class="columns is-centered has-text-justified">
+        <div class="column is-full">
+          <p>We show a comparison of our method with leading image-editing models on Local Image Editing using GEdit-Benchmark. Since none of the baseline models explicitly target few-step editing, we simply evaluate them with few-step sampling as well as show an example with multi-step setting (in the second column) for an upper-bound comparison. Our method performs comparably to the baselines, especially in the few-step setting, and can successfully follow different editing instructions while being consistent with the input reference image</p>
+          <br>
+          <img src="static/images/comparison_editing.png" alt="Results" class="youtube-video">
+
         </div>
       </div>
+      <!-- <br> -->
     </div>
   </div>
 </section>
-<!-- End youtube video -->
 
-
-<!-- Video carousel -->
 <section class="hero is-small">
   <div class="hero-body">
-    <div class="container">
-      <h2 class="title is-3">Another Carousel</h2>
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-video1">
-          <video poster="" id="video1" autoplay controls muted loop height="100%">
-            <!-- Your video file here -->
-            <source src="static/videos/carousel1.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video2">
-          <video poster="" id="video2" autoplay controls muted loop height="100%">
-            <!-- Your video file here -->
-            <source src="static/videos/carousel2.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video3">
-          <video poster="" id="video3" autoplay controls muted loop height="100%">\
-            <!-- Your video file here -->
-            <source src="static/videos/carousel3.mp4"
-            type="video/mp4">
-          </video>
+    <div class="container is-max-desktop">
+      <center><h5 class="title is-3">Qualitative comparison (Free-form Image Editing) </h5></center>
+      <br>
+      <div class="columns is-centered has-text-justified">
+        <div class="column is-full">
+          <p>We compare our method with state-of-the-art baselines (trained on paired data) on Free-form Image Editing a.k.a Customization using DreamBooth benchmark. Even without using any paired data during training, our method can successfully incorporate the text prompt while maintaining object identity with the reference image.</p>
+          <br>
+          <img src="static/images/comparison_customization.jpg" alt="Results" class="youtube-video">
         </div>
       </div>
     </div>
   </div>
 </section>
-<!-- End video carousel -->
 
 
 
-
-
-
-<!-- Paper poster -->
-<section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title">Poster</h2>
-
-      <iframe  src="static/pdfs/sample.pdf" width="100%" height="550">
-          </iframe>
-        
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full">
+        <center><h2 class="title is-3">Role of Dataset Scale and VLM Size</h2></center>
+        <br>
+          <center>
+            <img src="static/images/dataset_and_vlm_scale.png" style="width: 70%;" class="center-image blend-img-background">
+          </center>
+          <div class="content has-text-justified"></div>
+          <p>
+            Our training dataset consists of reference images and corresponding editing instructions only and not the ground truth edited image. To study the impact of dataset size and VLM scale, we vary them and evaluate performance on GEdit-Benchmark using VIEScore. We observe consistent gains with larger datasets. Similarly, a larger parameter VLM-backbone leads to better performance, underscoring the promise that our method can improve as more powerful VLMs are developed.
+          </p>
       </div>
     </div>
-  </section>
-<!--End paper poster -->
+  </div>
+  <hr>
+  <br>
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full">
+        <center><h2 class="title is-3">Comparison with RL-based technique Flow-GRPO </h2></center>
+        <br>
+          <center>
+            <img src="static/images/flow_grpo_comparison.png" style="width: 70%;" class="center-image blend-img-background">
+          </center>
+          <div class="content has-text-justified"></div>
+          <p>
+            RL is a common post-training strategy for improving pre-trained models without paired supervision and can also leverage VLMs as the reward model, a similar setup to ours. However, RL relies on a reasonable initialization, and therefore we need to first train an image-editing model via Supervised Fine-Tuning (SFT) on a paired dataset. We then use Flow-GRPO, a widely used RL method for text-to-image diffusion, to post-train the SFT model further. Given the same VLM as the reward model, our method outperforms Flow-GRPO on GEdit-Benchmark as evaluated by VIEScore.
+          </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <center><h5 class="title is-3">Limitation </h5></center>
+      <br>
+      <div class="columns is-centered has-text-justified">
+        <div class="column is-full">
+          <center>
+            <img src="static/images/limitation.jpg" style="width: 60%;" class="center-image blend-img-background">
+          </center>
+          <p>Since our method is trained without pixel-level supervision of a ground truth edited image, during inference, we observe that the edited image may deviate from the input image in spatial details or fail to fully preserve subject identity. Adding a perceptual similarity loss (e.g., LPIPS) between input and edited images alleviates this to some extent, though often at the cost of editing quality.</p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper method -->
+
 
 
 <!--BibTex citation -->
   <section class="section" id="BibTeX">
     <div class="container is-max-desktop content">
       <h2 class="title">BibTeX</h2>
-      <pre><code>BibTex Code Here</code></pre>
+      <pre><code>@article{kumari2025npedit,
+        title={Learning an Image Editing Model without Image Editing Pairs},
+        author={Kumari, Nupur and Wang, Sheng-Yu and Zhao, Nanxuan and Nitzan, Yotam and Li, Yuheng and Singh, Krishna Kumar and Zhang, Richard and Shechtman, Eli and Zhu, Jun-Yan and Huang, Xun},
+        journal={arXiv preprint arXiv:},
+        year={2025}
+      }</code></pre>
     </div>
 </section>
 <!--End BibTex citation -->
+
+<section class="section" id="Acknowledgements">
+  <div class="container is-max-desktop content">
+    <h2 class="title">Acknowledgements</h2>
+    We thank Gaurav Parmar, Maxwell Jones, and ... for their feedback and helpful discussions. This work was partly done while Nupur Kumari was interning at Adobe Research. This project is partly supported by ...
+    
+   </div>
+</section>
+
+
+<section class="section hero is-light"
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h5 class="title">References</h5>
+        <!-- list of references -->
+        <!-- <ul>
+          <li>Flow-GRPO: https://arxiv.org/abs/2410.04052</li>
+          <li>GEdit-Benchmark: https://github.com/nupurkmr9/gedit-benchmark</li>
+          <li>VIEScore: https://github.com/nupurkmr9/viescore</li>
+        </ul> -->
+    </div>
+  </div>
+</section>
 
 
   <footer class="footer">
