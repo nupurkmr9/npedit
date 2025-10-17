@@ -146,7 +146,7 @@
                   </div>
 
                   <div class="is-size-5 publication-authors">
-                    <span class="author-block"><sup>1</sup>CMU, <sup>2</sup> Adobe<br>ArXiv 2025</span>
+                    <span class="author-block"><sup>1</sup>Carnegie Mellon University, &nbsp;&nbsp <sup>2</sup> Adobe Research<br>ArXiv 2025</span>
                     <!-- <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span> -->
                   </div>
 
@@ -154,7 +154,7 @@
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <span class="link-block">
-                        <a href="https://arxiv.org/pdf/2502.01720.pdf" target="_blank"
+                        <a href="https://arxiv.org/abs/2510.14978.pdf" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
@@ -165,7 +165,7 @@
 
                   <!-- Github link -->
                   <span class="link-block">
-                    <a href="https://nupurkmr9.github.io/npedit/" target="_blank"
+                    <a href="https://nupurkmr9.github.io/npedit/"
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
                       <i class="fab fa-github"></i>
@@ -175,7 +175,7 @@
                 </span>
                 <!-- ArXiv abstract Link -->
                 <span class="link-block">
-                  <a href="https://arxiv.org/abs/2502.01720" target="_blank"
+                  <a href="https://arxiv.org/abs/2510.14978" target="_blank"
                   class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                     <i class="ai ai-arxiv"></i>
@@ -290,7 +290,7 @@
       <br>
       <div class="columns is-centered has-text-justified">
         <div class="column is-full">
-          <p>We show a comparison of our method with leading image-editing models on Local Image Editing using GEdit-Benchmark. Since none of the baseline models explicitly target few-step editing, we simply evaluate them with few-step sampling as well as show an example with multi-step setting (in the second column) for an upper-bound comparison. Our method performs comparably to the baselines, especially in the few-step setting, and can successfully follow different editing instructions while being consistent with the input reference image</p>
+          <p>We show a comparison of our method with leading image-editing models on Local Image Editing using GEdit-Benchmark <a href="#ref1">[1]</a>. Since none of the baseline models explicitly target few-step editing, we simply evaluate them with few-step sampling as well as show an example with multi-step setting (in the second column) for an upper-bound comparison. Our method performs comparably to the baselines, especially in the few-step setting, and can successfully follow different editing instructions while being consistent with the input reference image</p>
           <br>
           <img src="static/images/comparison_editing.png" alt="Results" class="youtube-video">
 
@@ -308,7 +308,7 @@
       <br>
       <div class="columns is-centered has-text-justified">
         <div class="column is-full">
-          <p>We compare our method with state-of-the-art baselines (trained on paired data) on Free-form Image Editing a.k.a Customization using DreamBooth benchmark. Even without using any paired data during training, our method can successfully incorporate the text prompt while maintaining object identity with the reference image.</p>
+          <p>We compare our method with state-of-the-art baselines (trained on paired data) on Free-form Image Editing a.k.a Customization using DreamBooth <a href="#ref2">[2]</a> benchmark. Even without using any paired data during training, our method can successfully incorporate the text prompt while maintaining object identity with the reference image.</p>
           <br>
           <img src="static/images/comparison_customization.jpg" alt="Results" class="youtube-video">
         </div>
@@ -330,7 +330,7 @@
           </center>
           <div class="content has-text-justified"></div>
           <p>
-            Our training dataset consists of reference images and corresponding editing instructions only and not the ground truth edited image. To study the impact of dataset size and VLM scale, we vary them and evaluate performance on GEdit-Benchmark using VIEScore. We observe consistent gains with larger datasets. Similarly, a larger parameter VLM-backbone leads to better performance, underscoring the promise that our method can improve as more powerful VLMs are developed.
+            Our training dataset consists of reference images and corresponding editing instructions without the ground truth edited images. To study the impact of dataset size and VLM scale, we vary them and evaluate performance on GEdit-Benchmark using VIEScore <a href="#ref3">[3]</a>. We observe consistent gains with larger datasets. Similarly, a larger parameter VLM-backbone leads to better performance, underscoring the promise that our method can improve as more powerful VLMs are developed.
           </p>
       </div>
     </div>
@@ -347,7 +347,7 @@
           </center>
           <div class="content has-text-justified"></div>
           <p>
-            RL is a common post-training strategy for improving pre-trained models without paired supervision and can also leverage VLMs as the reward model, a similar setup to ours. However, RL relies on a reasonable initialization, and therefore we need to first train an image-editing model via Supervised Fine-Tuning (SFT) on a paired dataset. We then use Flow-GRPO, a widely used RL method for text-to-image diffusion, to post-train the SFT model further. Given the same VLM as the reward model, our method outperforms Flow-GRPO on GEdit-Benchmark as evaluated by VIEScore.
+            Reinforcement Learning (RL)-baesd techniques are a common post-training strategy for improving pre-trained models without paired supervision and can also leverage VLMs as the reward model, a similar setup to ours. However, RL relies on a reasonable initialization, and therefore we need to first train an image-editing model via Supervised Fine-Tuning (SFT) on a paired dataset. We then use Flow-GRPO <a href="#ref4">[4]</a>, a widely used RL method for text-to-image diffusion, to post-train the SFT model further. Given the same VLM as the reward model, our method outperforms Flow-GRPO on GEdit-Benchmark as evaluated by VIEScore.
           </p>
       </div>
     </div>
@@ -365,16 +365,52 @@
           <center>
             <img src="static/images/limitation.jpg" style="width: 60%;" class="center-image blend-img-background">
           </center>
-          <p>Since our method is trained without pixel-level supervision of a ground truth edited image, during inference, we observe that the edited image may deviate from the input image in spatial details or fail to fully preserve subject identity. Adding a perceptual similarity loss (e.g., LPIPS) between input and edited images alleviates this to some extent, though often at the cost of editing quality.</p>
+          <p>Since our method is trained without pixel-level supervision of a ground truth edited image, during inference, we observe that the edited image may deviate from the input image in spatial details or fail to fully preserve subject identity. Adding a perceptual similarity loss (e.g., LPIPS <a href="#ref5">[5]</a>) between input and edited images alleviates this to some extent, though often at the cost of editing quality, such as failure to remove the bangs in the second row of the above image.</p>
 
         </div>
       </div>
     </div>
   </div>
 </section>
+
+
+<section class="section hero is-light"
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h5 class="title">References</h5>
+      <div class="content has-text-justified">
+        <ol>
+          <li id="ref1">
+            <strong> Step1X-Edit:</strong> A Practical Framework for General Image Editing. 
+            <a href="https://github.com/stepfun-ai/Step1X-Edit/tree/main/GEdit-Bench" target="_blank">https://github.com/stepfun-ai/Step1X-Edit/</a>
+          </li>
+          <li id="ref2">
+            <strong> DreamBooth:</strong> Fine Tuning Text-to-Image Diffusion Models for Subject-Driven Generation. 
+            <a href="https://dreambooth.github.io" target="_blank">https://dreambooth.github.io</a>
+          </li>
+          <li id="ref3">
+            <strong>VIEScore:</strong> Towards Explainable Metrics for Conditional Image Synthesis Evaluation. 
+            <a href="https://github.com/TIGER-AI-Lab/VIEScore" target="_blank">https://github.com/TIGER-AI-Lab/VIEScore</a>
+          </li>
+          <li id="ref4">
+            <strong>Flow-GRPO:</strong> Training Flow Matching Models via Online RL. 
+            <a href="https://github.com/yifan123/flow_grpo" target="_blank">https://github.com/yifan123/flow_grpo</a>
+          </li>
+          <li id="ref5">
+            <strong>LPIPS:</strong> The Unreasonable Effectiveness of Deep Features as a Perceptual Metric. 
+            <a href="https://github.com/richzhang/PerceptualSimilarity" target="_blank">https://github.com/richzhang/PerceptualSimilarity</a>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- End paper method -->
 
 
+<section class="section hero is-small">
+  <div class="container is-max-desktop">
 
 <!--BibTex citation -->
   <section class="section" id="BibTeX">
@@ -393,24 +429,10 @@
 <section class="section" id="Acknowledgements">
   <div class="container is-max-desktop content">
     <h2 class="title">Acknowledgements</h2>
-    We thank Gaurav Parmar, Maxwell Jones, and ... for their feedback and helpful discussions. This work was partly done while Nupur Kumari was interning at Adobe Research. This project is partly supported by ...
-    
+    We thank Gaurav Parmar, Maxwell Jones, and Ruihan Gao for their feedback and helpful discussions. This work was partly done while Nupur Kumari was interning at Adobe Research. The project was partly supported by Adobe Inc., the Packard Fellowship, the IITP grant funded by the Korean Government (MSIT) (No. RS-2024-00457882, National AI Research Lab Project), NSF IIS-2239076, and NSF ISS-2403303.    
    </div>
 </section>
-
-
-<section class="section hero is-light"
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <h5 class="title">References</h5>
-        <!-- list of references -->
-        <!-- <ul>
-          <li>Flow-GRPO: https://arxiv.org/abs/2410.04052</li>
-          <li>GEdit-Benchmark: https://github.com/nupurkmr9/gedit-benchmark</li>
-          <li>VIEScore: https://github.com/nupurkmr9/viescore</li>
-        </ul> -->
-    </div>
-  </div>
+</div>
 </section>
 
 
@@ -431,12 +453,6 @@
     </div>
   </div>
 </footer>
-
-<!-- Statcounter tracking code -->
-  
-<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
-
-    <!-- End of Statcounter Code -->
 
   </body>
   </html>
