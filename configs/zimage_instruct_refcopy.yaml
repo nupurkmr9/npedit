@@ -1,0 +1,174 @@
+# Z-Image (Tongyi-MAI/Z-Image) refcopy training configuration
+
+model:
+  vae:
+    module: "models.zimage_vae.ZImageVAE"
+    params:
+      version: "Tongyi-MAI/Z-Image"
+      dtype: "fp32"
+      scale_factor: 0.3611
+      shift_factor: 0.1159
+      chunk_size: 64
+
+  text_encoder:
+    module: "models.zimage_text.ZImageTextEmbedder"
+    params:
+      version: "Tongyi-MAI/Z-Image"
+      max_length: 512
+      dtype: "bf16"
+      compile: true
+      float32_matmul_precision: "high"
+      padding_side: "right"
+      attn_mask_padding: true
+      output_exclude_padding: true
+      flatten_output: false
+      apply_chat_template: true
+    fsdp:
+      shard_size: null
+      param_dtype: "bf16"
+      reduce_dtype: "bf16"
+      ac_freq: 0
+      blocks_attr: "hf_module.layers"
+      reshard_after_forward_policy: "always"
+
+  denoiser:
+    module: "models.zimage_denoiser.ZImageDenoiser"
+    params:
+      version: "Tongyi-MAI/Z-Image"
+      dtype: "bf16"
+      reference_image: true
+    fsdp:
+      meta_device_init: true
+      shard_size: null
+      param_dtype: "bf16"
+      reduce_dtype: "fp32"
+      ac_freq: 0
+      blocks_attr: [ "transformer.layers" ]
+      reshard_after_forward_policy: "default"
+
+  time_sampler:
+    module: "utils_fm.noiser.TimeSampler"
+    params:
+      use_logit_normal: false
+      mu: 0.0
+      sigma: 1.0
+      min_timestep: 0.0
+      max_timestep: 1.0
+
+  time_warper:
+    module: "utils_fm.noiser.TimeWarper"
+    params:
+      base_len: 256
+      base_shift: 0.5
+      max_len: 4096
+      max_shift: 1.15
+      time_shift_type: "linear"
+      shift: 6.0  # Z-Image scheduler uses shift=6.0
+
+  time_weighter:
+    module: "utils_fm.noiser.TimeWeighter"
+    params:
+      use_logit_normal: true
+      mu: 0.0
+      sigma: 1.0
+
+  flow_noiser:
+    module: "utils_fm.noiser.FlowNoiser"
+    params:
+      compute_dtype: "fp32"
+
+trainer:
+  module: "trainers.dit_trainer.DiTTrainer"
+  params:
+    txt_drop_prob: 0.1
+
+    ema_decay: 0.999
+
+    max_steps: 5000
+    warmup_steps: 1000
+
+    max_lr: 0.00002
+    min_lr: 0.000001
+    weight_decay: 0.01
+    adam_betas: [ 0.9, 0.99 ]
+
+    total_batch_size: -1
+
+    gradient_clip_norm: 2.0
+    grad_norm_spike_threshold: 100.0
+    grad_norm_spike_detection_start_step: 1000
+
+    # Update this path for your Z-Image checkpoint
+    # init_ckpt: "./output/zimage_denoiser"
+    # init_ckpt_load_plan: "ckpt_model:mem_model,ckpt_step:mem_step"
+    ckpt_freq: 500
+    exp_dir: "./experiments/zimage_identity_warmup"
+
+    wandb_mode: "online"
+    wandb_project: "npedit"
+    wandb_name: "zimage_identity_warmup"
+    wandb_entity: ${WANDB_ENTITY}
+    log_freq: 10
+
+    val_freq: 10_000
+    val_num_samples: 32
+
+    inference_at_start: false
+    inference_then_exit: false
+    inference_freq: 5000
+
+    lora_rank: 0
+
+    image_log_freq: 100
+
+inferencer:
+  ckpt_dir: "./output/zimage_denoiser"  # Set to your Z-Image checkpoint path
+  inference_ops_args:
+    use_ema: false
+    prompt_file: "./resources/inference_prompts.txt"
+    output_dir: "./experiments/zimage_identity_warmup"
+    img_fhw: [ 1, 512, 512 ]
+    samples_per_prompt: 1
+    num_steps: 28
+    neg_prompt: ""
+    cfg_scale: 1.0
+    eta: 0.0
+    file_ext: "jpg"
+    per_gpu_bs: 1
+    guidance: null  # Z-Image is not guidance-distilled
+    sample_method: "ddim"
+    save_as_npz: false
+
+data:
+  module: "data.instruct.InstructDataModule"
+  params:
+    batch_size: 2
+    resolution: 512
+    num_workers: 8
+    p_horizon_flip: 0.5
+    critic_model_name: ""
+    critic_identity_model_name: ""
+    identity_mode: true
+    do_nothing_prob: 0.0
+    edit_data_path: "./datasets/merged_edit_data.json"
+    edit_data_root_dir: "./datasets"
+    edit_type_probs:
+      remove: 0.25
+      local color change: 0.0833
+      texture: 0.0833
+      shape change: 0.0833
+      insertion: 0.0833
+      replace: 0.0833
+      background change: 0.0833
+      style: 0.0833
+      action: 0.0833
+      text: 0.0837
+    bucketize: true
+    resolution_buckets:
+      - [512, 512]
+      - [576, 448]
+      - [448, 576]
+      - [640, 384]
+      - [384, 640]
+      - [512, 384]
+      - [384, 512]

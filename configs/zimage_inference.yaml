@@ -1,0 +1,112 @@
+# Z-Image (Tongyi-MAI/Z-Image) inference configuration
+
+student:
+  model:
+    vae:
+      module: "models.zimage_vae.ZImageVAE"
+      params:
+        version: "Tongyi-MAI/Z-Image"
+        dtype: "fp32"
+        scale_factor: 0.3611
+        shift_factor: 0.1159
+        chunk_size: 64
+
+    text_encoder:
+      module: "models.zimage_text.ZImageTextEmbedder"
+      params:
+        version: "Tongyi-MAI/Z-Image"
+        max_length: 512
+        dtype: "bf16"
+        compile: false
+        float32_matmul_precision: "high"
+        padding_side: "right"
+        attn_mask_padding: true
+        output_exclude_padding: true
+        flatten_output: false
+        apply_chat_template: true
+      fsdp:
+        shard_size: null
+        param_dtype: "bf16"
+        reduce_dtype: "bf16"
+        ac_freq: 0
+        blocks_attr: "hf_module.layers"
+        reshard_after_forward_policy: "always"
+
+    denoiser:
+      module: "models.zimage_denoiser.ZImageDenoiser"
+      params:
+        version: "Tongyi-MAI/Z-Image"
+        dtype: "bf16"
+        reference_image: true
+      fsdp:
+        meta_device_init: true
+        shard_size: null
+        param_dtype: "bf16"
+        reduce_dtype: "fp32"
+        ac_freq: 4
+        blocks_per_shard_group: 1
+        blocks_attr: [ "transformer.layers" ]
+        reshard_after_forward_policy: "default"
+
+    time_sampler:
+      module: "utils_fm.noiser.DMDTimeSampler"
+      params:
+        use_logit_normal: false
+        mu: 0.0
+        sigma: 1.0
+        dmd_time_steps: [1.0, 0.9474, 0.8571, 0.6667]
+
+    time_warper:
+      module: "utils_fm.noiser.TimeWarper"
+      params:
+        base_len: 256
+        base_shift: 0.5
+        max_len: 4096
+        max_shift: 1.15
+        time_shift_type: "linear"
+        shift: 1.0  # Z-Image scheduler uses shift=6.0
+
+    time_weighter:
+      module: "utils_fm.noiser.TimeWeighter"
+      params:
+        use_logit_normal: false
+        mu: 0.0
+        sigma: 1.0
+
+    flow_noiser:
+      module: "utils_fm.noiser.FlowNoiser"
+      params:
+        compute_dtype: "fp32"
+
+
+inferencer:
+  ckpt_dir: "./experiments/zimage_npedit_internvl/checkpoints/student/step_00012000"
+  inference_ops_args:
+    use_ema: false
+    prompt_file: ""
+    output_dir: "./experiments/zimage_npedit_inference"
+    img_fhw: [ 1, 512, 512 ]
+    samples_per_prompt: 1
+    num_steps: 4
+    neg_prompt: ""
+    cfg_scale: 1.0
+    eta: 1.0
+    file_ext: "jpg"
+    per_gpu_bs: 1
+    guidance: null
+    sample_method: "ddim"
+    save_as_npz: false
+    timesteps: [1.0, 0.9474, 0.8571, 0.6667]
+
+data:
+  module: "data.instruct.InstructDataModule"
+  params:
+    batch_size: 1
+    resolution: 512
+    num_workers: 8
+    p_horizon_flip: 0.
+    do_nothing_prob: 0.01
+    critic_model_name: "OpenGVLab/InternVL3-14B"
+    critic_identity_model_name: "OpenGVLab/InternVL3-14B"
+    gedit_bench_data_path: "temp"
+    bucketize: false
