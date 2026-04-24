@@ -1,7 +1,7 @@
 
 # NP-Edit
 
-> *This is an unofficial reimplementation of the paper using [Z-Image](https://github.com/Tongyi-MAI/Z-Image) model open-source image-editing datasets.
+> *This is an unofficial reimplementation of NP-Edit.
 
 <img width="1080" height="608" alt="12952453-187a-4014-b41f-6bf033c5942f" src="https://github.com/user-attachments/assets/4ca582ea-6c79-4306-a3d1-bc7f82efde4a" />
 
@@ -23,6 +23,13 @@
  
 ### [website](https://nupurkmr9.github.io/npedit/) | [paper](https://arxiv.org/abs/2510.14978) | [Code](https://github.com/nupurkmr9/npedit) 
 
+## Differences from the Paper Implementation
+
+This repo is a reimplementation intended to be fully reproducible from open-source components. It deviates from the paper in the following ways:
+
+- **Base text-to-image model:** [Z-Image (6B)](https://huggingface.co/Tongyi-MAI/Z-Image) instead of the internal 2B DiT latent diffusion model used in the paper.
+- **VLM critic:** InternVL3-14B instead of LLaVA-OneVision-7B as the VLM. 
+- **Training data:** open-source [pico-banana-400k](https://github.com/apple/pico-banana-400k) + [GPT-Image-Edit-1.5M](https://huggingface.co/datasets/UCSC-VLAA/GPT-Image-Edit-1.5M) (only reference images and edit instructions are used during training). The paper used an internal collection of reference images with instructions synthesized by Qwen2.5-32B.
 
 ## Method
 
@@ -61,7 +68,21 @@ pip install --pre flash-attn-4[cu13]
 pip install transformers==5.5.0
 pip install accelerate diffusers
 pip install wandb peft datasets timm
+pip install "huggingface_hub[cli]"
 ```
+
+## Inference with Trained Model
+
+Download the pretrained checkpoint:
+
+```bash
+hf download nupurkmr9/npedit zimage_npedit_internvl.pt --local-dir experiments/
+```
+
+```
+python scripts/edit.py --image assets/input.jpg --instruction "Delete the white fence." --output assets/out.jpg
+```
+
 
 ## Environment Variables
 
@@ -102,19 +123,26 @@ unzip awscliv2.zip && ./aws/install --install-dir $HOME/.local/aws-cli --bin-dir
 ```
 
 
+Download `merged_edit_data.json` (the list of valid samples used during training):
+
 ```bash
-# Download both datasets
-bash scripts/download_datasets.sh --data-dir /path/to/datasets
+hf download nupurkmr9/npedit merged_edit_data.json --local-dir ./datasets
+```
+
+Then download the image datasets:
+
+```bash
+bash scripts/download_datasets.sh --data-dir ./datasets
 ```
 
 This will:
 1. Download **pico-banana-400k** source images from Open Images S3 (requires AWS CLI)
 2. Download **GPT-Image-Edit-1.5M** from HuggingFace using multi-process download
-3. We use the samples provided in `merged_edit_data.json` to select valid samples
+3. We use the samples listed in `merged_edit_data.json` to select valid samples
 
 **Options:**
 ```bash
-bash scripts/download_datasets.sh --data-dir /path/to/datasets \
+bash scripts/download_datasets.sh --data-dir ./datasets \
     --workers 8 \              # parallel download workers (default: 8)
     --skip-gpt-image \         # skip GPT-Image-Edit-1.5M
     --skip-pico-banana \       # skip pico-banana-400k
@@ -155,7 +183,7 @@ For multi-node training, run the above command on each node with the appropriate
 | `resolution_buckets` | List of (H, W) buckets, e.g. 512x512, 576x448, 640x384 | 7 buckets |
 
 
-## Inference (After training)
+## Inference on GEdit Bench (After training)
 
 ```bash
 torchrun --nproc_per_node=1   -m entrypoint --mode=inference --config configs/zimage_inference.yaml
@@ -169,6 +197,12 @@ Inference parameters are set in the `inferencer` section of the config:
 - [Z-Image](https://huggingface.co/Tongyi-MAI/Z-Image) — base text-to-image model
 - [InternVL](https://github.com/OpenGVLab/InternVL) — VLM used as critic
 - [pico-banana-400k](https://github.com/apple/pico-banana-400k) and [GPT-Image-Edit-1.5M](https://huggingface.co/datasets/UCSC-VLAA/GPT-Image-Edit-1.5M) — training datasets. We only use the reference input image and edit instruction during our training. 
+
+## TODO
+
+- [ ] Optimize for H100 (currently tuned/tested on H200. The 14B critic + 6B each teacher + aux + student needs CPU-offloading or sharding tweaks for H100).
+- [ ] Check performance with LoRA instead of full fine-tuning for lower VRAM.
+- [ ] Add the free-form subject-reference customization experiment.
 
 ## BibTeX
 

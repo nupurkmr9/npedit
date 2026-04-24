@@ -98,6 +98,11 @@ inferencer:
     save_as_npz: false
     timesteps: [1.0, 0.9474, 0.8571, 0.6667]
 
+trainer:
+  module: "trainers.dmd_trainer.DMDTrainer"
+  params:
+    exp_dir: "./experiments/zimage_npedit_inference"
+
 data:
   module: "data.instruct.InstructDataModule"
   params:
