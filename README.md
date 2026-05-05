@@ -200,7 +200,7 @@ Inference parameters are set in the `inferencer` section of the config:
 
 ## TODO
 
-- [ ] Optimize for H100 (currently tuned/tested on H200. The 14B critic + 6B each teacher + aux + student needs CPU-offloading or sharding tweaks for H100).
+- [x] Optimize for H100. Gradient checkpointing works correctly.
 - [ ] Check performance with LoRA instead of full fine-tuning for lower VRAM.
 - [ ] Add the free-form subject-reference customization experiment.
 
