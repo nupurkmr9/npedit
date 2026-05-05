@@ -17,7 +17,7 @@ student:
         version: "Tongyi-MAI/Z-Image"
         max_length: 512
         dtype: "bf16"
-        compile: false
+        compile: true
         float32_matmul_precision: "high"
         padding_side: "right"
         attn_mask_padding: true
@@ -43,7 +43,7 @@ student:
         shard_size: null
         param_dtype: "bf16"
         reduce_dtype: "fp32"
-        ac_freq: 4
+        ac_freq: 1
         blocks_per_shard_group: 1
         blocks_attr: [ "transformer.layers" ]
         reshard_after_forward_policy: "default"
@@ -91,7 +91,7 @@ teacher:
         shard_size: null
         param_dtype: "bf16"
         reduce_dtype: "fp32"
-        ac_freq: 4
+        ac_freq: 0
         blocks_per_shard_group: 1
         blocks_attr: [ "transformer.layers" ]
         reshard_after_forward_policy: "always"
@@ -141,7 +141,7 @@ aux:
         shard_size: null
         param_dtype: "bf16"
         reduce_dtype: "fp32"
-        ac_freq: 4
+        ac_freq: 1
         blocks_attr: [ "transformer.layers" ]
         reshard_after_forward_policy: "default"
 
@@ -187,7 +187,7 @@ critic:
     shard_size: null
     param_dtype: "bf16"
     reduce_dtype: "fp32"
-    ac_freq: 0
+    ac_freq: 1
     blocks_per_shard_group: 1
     blocks_attr:
       - "model.language_model.model.layers"
@@ -299,7 +299,7 @@ data:
       - [512, 384]
       - [384, 512]
     edit_data_path: "./datasets/merged_edit_data.json"
-    edit_data_root_dir: "./datasets"
+    edit_data_root_dir: "./datasets/"
     edit_type_probs:
       remove: 0.25
       local color change: 0.0833

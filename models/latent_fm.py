@@ -519,22 +519,23 @@ class TrainableOpsDMDAux:
 
         h = data_batch.img.shape[-2]
         x = data_batch.img[:, :, :, h // 2:, :]
-        for t, next_t in zip(timesteps[:-1], timesteps[1:], strict=True):
-            t = torch.ones(data_batch.timesteps.shape, dtype=torch.float32, device=device) * t
-            next_t = torch.ones(data_batch.timesteps.shape, dtype=torch.float32, device=device) * next_t
-            img = torch.cat([data_batch.reference_img_clean.detach(), x], dim=-2).contiguous()
-            pred_v = self.lfm.denoiser(
-                txt=data_batch.txt,
-                txt_datum_lens=data_batch.txt_datum_lens,
-                img=img,
-                t=t,
-                txt_embedding_mask=data_batch.txt_embedding_mask,
-            )
-            x_0 = x - match_dims(t, pred_v.shape) * pred_v
-            x = x + pred_v * match_dims(next_t - t, pred_v.shape)
-            
-            if sample_method == "ddim":
-                x, _ = self.lfm.flow_noiser(x_0, data_batch.img_datum_lens // 2, next_t)
+        with fwd_only_mode(self.lfm.denoiser):
+            for t, next_t in zip(timesteps[:-1], timesteps[1:], strict=True):
+                t = torch.ones(data_batch.timesteps.shape, dtype=torch.float32, device=device) * t
+                next_t = torch.ones(data_batch.timesteps.shape, dtype=torch.float32, device=device) * next_t
+                img = torch.cat([data_batch.reference_img_clean.detach(), x], dim=-2).contiguous()
+                pred_v = self.lfm.denoiser(
+                    txt=data_batch.txt,
+                    txt_datum_lens=data_batch.txt_datum_lens,
+                    img=img,
+                    t=t,
+                    txt_embedding_mask=data_batch.txt_embedding_mask,
+                )
+                x_0 = x - match_dims(t, pred_v.shape) * pred_v
+                x = x + pred_v * match_dims(next_t - t, pred_v.shape)
+                
+                if sample_method == "ddim":
+                    x, _ = self.lfm.flow_noiser(x_0, data_batch.img_datum_lens // 2, next_t)
         
         return x
     

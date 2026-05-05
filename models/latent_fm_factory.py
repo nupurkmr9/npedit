@@ -68,10 +68,10 @@ def create_critic(critic_config: dict[str, Any], device: torch.device) -> BaseCr
     logger.info("Creating Critic...")
     fsdp_spec = critic_config.get("fsdp", None)
     critic = create_component(critic_config["module"], critic_config["params"], fsdp_spec)
-    if fsdp_spec is not None and fsdp_spec["offload_params"]:
+    if fsdp_spec is not None and fsdp_spec.get("offload_params", False):
         if not fsdp_spec["shard_root"]:
             move_non_fsdp_to_cuda(critic, device, DTYPE_MAP[critic_config["params"]["dtype"]])
-    if fsdp_spec is None or not fsdp_spec["offload_params"]:
+    if fsdp_spec is None or not fsdp_spec.get("offload_params", False):
         critic = critic.to(device, dtype=DTYPE_MAP[critic_config["params"]["dtype"]])
     critic.model.eval()
     critic.model.requires_grad = False
@@ -119,7 +119,8 @@ def create_latent_fm(config: dict[str, Any], device: torch.device, create_ema: b
         denoiser = create_component(denoiser_config["module"], denoiser_config["params"])
     else:
         denoiser = create_component(denoiser_config["module"], denoiser_config["params"], denoiser_fsdp_spec)
-    denoiser = denoiser.to(device)  # noops
+    if denoiser_fsdp_spec is None or not denoiser_fsdp_spec.get("offload_params", False):
+        denoiser = denoiser.to(device)
     denoiser.init_weights()
     if lora_rank > 0:
         logger.info(f"Creating LoRA for Denoiser with rank {lora_rank}...")
@@ -156,7 +157,8 @@ def create_latent_fm(config: dict[str, Any], device: torch.device, create_ema: b
             fsdp_spec["reshard_after_forward_policy"] = "always"
 
         ema_denoiser = create_component(ema_denoiser_config["module"], ema_denoiser_config["params"], fsdp_spec)
-        ema_denoiser = ema_denoiser.to(device)  # noops
+        if fsdp_spec is None or not fsdp_spec.get("offload_params", False):
+            ema_denoiser = ema_denoiser.to(device)
         # No need to init weights for ema_denoiser, as it will be copied from denoiser at training start
         for param in ema_denoiser.parameters():
             param.requires_grad = False  # we will directly modify ema_denoiser parameters in training

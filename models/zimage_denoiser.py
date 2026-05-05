@@ -205,30 +205,23 @@ def replace_forward_function(module, new_forward):
     module.forward = new_forward.__get__(module, module.__class__)
 
 
-def _bound_dual_adaln_block_forward(self, x, attn_mask, freqs_cis, adaln_input=None):
+def _bound_dual_adaln_block_forward(self, x, attn_mask, freqs_cis, adaln_noisy, adaln_clean=None, n_clean=None):
     """Bound replacement for ZImageTransformerBlock.forward with dual-adaln.
 
     `self` is the layer instance (bound via __get__).
-    Reads adaln context from self._adaln_ctx (a shared dict, not an nn.Module).
     """
     if not self.modulation:
         return self._original_forward(x, attn_mask, freqs_cis)
-    ctx = self._adaln_ctx
     return _dual_adaln_block_forward(
         self, x, attn_mask, freqs_cis,
-        ctx['adaln_noisy'], ctx['adaln_clean'], ctx['n_clean'],
+        adaln_noisy, adaln_clean, n_clean,
     )
 
 
-def _bound_dual_adaln_final_forward(self, x, c):
-    """Bound replacement for FinalLayer.forward with dual-adaln.
-
-    `self` is the final layer instance (bound via __get__).
-    Reads adaln context from self._adaln_ctx (a shared dict, not an nn.Module).
-    """
-    ctx = self._adaln_ctx
+def _bound_dual_adaln_final_forward(self, x, adaln_noisy, adaln_clean, n_clean):
+    """Bound replacement for FinalLayer.forward with dual-adaln."""
     return _dual_adaln_final_forward(
-        self, x, ctx['adaln_noisy'], ctx['adaln_clean'], ctx['n_clean'],
+        self, x, adaln_noisy, adaln_clean, n_clean,
     )
 
 
@@ -331,7 +324,6 @@ class ZImageDenoiser(nn.Module, ConfigurableModule[ZImageDenoiserParams]):
                     module.processor = fa4_processor
 
         self.runtime_parameter_dtype: torch.dtype | None = None
-        self._adaln_ctx: dict = {}
 
         if self.reference_image:
             self._setup_dual_adaln_forwards()
@@ -340,22 +332,16 @@ class ZImageDenoiser(nn.Module, ConfigurableModule[ZImageDenoiserParams]):
         """Replace layer forwards once for dual-adaln support.
 
         Called in __init__ when reference_image=True. Each layer gets a permanent
-        bound method that reads adaln context from self._adaln_ctx, eliminating
-        per-call monkey-patching overhead.
-
-        We store a reference to the shared _adaln_ctx dict (not to self) on each
-        layer to avoid circular nn.Module references that break FSDP traversal.
+        bound method whose adaln args are threaded positionally.
         """
         tf = self.transformer
 
         for layer in list(tf.noise_refiner) + list(tf.layers):
             layer._original_forward = layer.forward
-            layer._adaln_ctx = self._adaln_ctx  # shared dict ref, not nn.Module
             replace_forward_function(layer, _bound_dual_adaln_block_forward)
 
         for key, final_layer in tf.all_final_layer.items():
             final_layer._original_forward = final_layer.forward
-            final_layer._adaln_ctx = self._adaln_ctx  # shared dict ref, not nn.Module
             replace_forward_function(final_layer, _bound_dual_adaln_final_forward)
 
     @classmethod
@@ -441,7 +427,8 @@ class ZImageDenoiser(nn.Module, ConfigurableModule[ZImageDenoiserParams]):
         """Fully batched dual-adaln forward — no list conversions, no monkey-patching.
 
         Layer forwards were replaced once in __init__ via _setup_dual_adaln_forwards.
-        We just set self._adaln_ctx before each layer group and call layers normally.
+        adaln_noisy/adaln_clean/n_clean are passed positionally so activation
+        checkpointing can recompute layers independently.
         """
         tf = self.transformer
         B = img.shape[0]
@@ -485,14 +472,8 @@ class ZImageDenoiser(nn.Module, ConfigurableModule[ZImageDenoiserParams]):
         n_ref_tokens = grid[1] * grid[2]
 
         # --- Noise refiner (image-only) ---
-        # Update in-place — layers hold a reference to this same dict object
-        self._adaln_ctx.update({
-            'adaln_noisy': adaln_noisy,
-            'adaln_clean': adaln_clean,
-            'n_clean': n_ref_tokens,
-        })
         for layer in tf.noise_refiner:
-            x_flat = layer(x_flat, x_attn_mask, x_freqs_cis, adaln_noisy)
+            x_flat = layer(x_flat, x_attn_mask, x_freqs_cis, adaln_noisy, adaln_clean, n_ref_tokens)
 
         # --- Caption embedding (batched) ---
         if txt.dim() == 3:
@@ -542,12 +523,11 @@ class ZImageDenoiser(nn.Module, ConfigurableModule[ZImageDenoiserParams]):
         # n_clean stays the same: only the first n_ref_tokens (frame 0 image tokens)
         # are clean. All other tokens (frame 1 image + padding + text) get noisy modulation.
         # --- Main transformer layers ---
-        self._adaln_ctx['n_clean'] = n_ref_tokens
         for layer in tf.layers:
-            unified = layer(unified, unified_attn_mask, unified_freqs_cis, adaln_noisy)
+            unified = layer(unified, unified_attn_mask, unified_freqs_cis, adaln_noisy, adaln_clean, n_ref_tokens)
 
         # --- Final layer ---
-        unified = tf.all_final_layer[f"{patch_size}-{f_patch_size}"](unified, adaln_noisy)
+        unified = tf.all_final_layer[f"{patch_size}-{f_patch_size}"](unified, adaln_noisy, adaln_clean, n_ref_tokens)
 
         # --- Unpatchify (batched) ---
         x_out = unified[:, :x_seq_len]
